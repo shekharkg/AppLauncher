@@ -1,3 +1,4 @@
 <resources>
   <string name="app_name">App Launcher</string>
+  <string name="action_sort">Sort</string>
 </resources>

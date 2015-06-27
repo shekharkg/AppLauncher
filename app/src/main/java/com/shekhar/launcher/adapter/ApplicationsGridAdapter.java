@@ -14,6 +14,9 @@ import android.widget.TextView;
 import com.shekhar.launcher.R;
 import com.shekhar.launcher.activity.MainActivity;
 import com.shekhar.launcher.dao.ApplicationDetailsModel;
+import com.shekhar.launcher.database.ApplicationDataBase;
+
+import java.util.Calendar;
 
 /**
  * Created by ShekharKG on 6/28/2015.
@@ -21,9 +24,11 @@ import com.shekhar.launcher.dao.ApplicationDetailsModel;
 public class ApplicationsGridAdapter extends BaseAdapter {
 
   private Context context;
+  private ApplicationDataBase applicationDataBase;
 
   public ApplicationsGridAdapter(Context context) {
     this.context = context;
+    applicationDataBase = ApplicationDataBase.getSingletonInstance(context);
   }
 
   @Override
@@ -69,6 +74,11 @@ public class ApplicationsGridAdapter extends BaseAdapter {
     row.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
+        int count = model.getFrequencyCount();
+        long time = Calendar.getInstance().getTimeInMillis();
+        applicationDataBase.updateAppDetails(model.getId(), time, ++count);
+        model.setLastUsedOn(time);
+        model.setFrequencyCount(count);
         Intent intent = context.getPackageManager().getLaunchIntentForPackage(model.getAppPackage());
         context.startActivity(intent);
       }

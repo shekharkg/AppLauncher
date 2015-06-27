@@ -90,7 +90,8 @@ public class ApplicationDataBase extends SQLiteOpenHelper {
         applicationDetailsModels.add(new ApplicationDetailsModel(cursor.getInt(0),
             cursor.getString(2), cursor.getString(1), cursor.getLong(3), cursor.getLong(4),
             cursor.getInt(5)));
-      } catch (Exception ignored) {
+      } catch (Exception e) {
+        e.printStackTrace();
       }
     }
 

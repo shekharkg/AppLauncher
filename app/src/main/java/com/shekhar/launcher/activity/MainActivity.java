@@ -21,6 +21,9 @@ import com.shekhar.launcher.dao.ApplicationDetailsModel;
 import com.shekhar.launcher.database.ApplicationDataBase;
 import com.shekhar.launcher.intrface.CallBack;
 
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -31,7 +34,7 @@ public class MainActivity extends Activity implements CallBack {
   private ApplicationDataBase applicationDataBase;
 
   private ImageView replace;
-  public OctogonImageView[] img;
+  public OctogonImageView[] octogonImageViews;
   private String selectedId;
 
 
@@ -45,14 +48,14 @@ public class MainActivity extends Activity implements CallBack {
     if (applicationDetailsModels.size() < 1)
       new AddApplicationDetailsAsync(this, this).execute();
     else
-      loadAppsInHomeScreen();
+      loadAppsInHomeScreen(false);
 
   }
 
   private void loadApplicationImageView() {
     for (int i = 0; i < 8; i++) {
       final ApplicationDetailsModel model = applicationDetailsModels.get(i);
-      img[i].setOnLongClickListener(new View.OnLongClickListener() {
+      octogonImageViews[i].setOnLongClickListener(new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View view) {
           replace.setVisibility(View.VISIBLE);
@@ -64,25 +67,29 @@ public class MainActivity extends Activity implements CallBack {
         }
       });
 
-      img[i].setOnClickListener(new View.OnClickListener() {
+      octogonImageViews[i].setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-          run(model.getAppPackage());
+          run(model);
         }
       });
 
       try {
-        img[i].setImageDrawable(getPackageManager().getApplicationIcon(model.getAppPackage()));
+        octogonImageViews[i].setImageDrawable(getPackageManager().getApplicationIcon(model.getAppPackage()));
       } catch (PackageManager.NameNotFoundException e) {
         e.printStackTrace();
       }
     }
   }
 
-  public void run(String packageName) {
-    Log.e("run", packageName, null);
+  public void run(ApplicationDetailsModel model) {
     try {
-      Intent intent = this.getPackageManager().getLaunchIntentForPackage(packageName);
+      int count = model.getFrequencyCount();
+      long time = Calendar.getInstance().getTimeInMillis();
+      applicationDataBase.updateAppDetails(model.getId(), time, ++count);
+      model.setLastUsedOn(time);
+      model.setFrequencyCount(count);
+      Intent intent = this.getPackageManager().getLaunchIntentForPackage(model.getAppPackage());
       this.startActivity(intent);
     } catch (Exception e) {
       e.printStackTrace();
@@ -142,19 +149,32 @@ public class MainActivity extends Activity implements CallBack {
     }
   };
 
+  @Override
+  protected void onResume() {
+    super.onResume();
+    if (applicationDetailsModels.size() > 0)
+      loadAppsInHomeScreen(true);
+  }
 
-  private void loadAppsInHomeScreen() {
-    img = new OctogonImageView[8];
-    replace = (ImageView) findViewById(R.id.replace);
-    img[0] = (OctogonImageView) findViewById(R.id.image1);
-    img[1] = (OctogonImageView) findViewById(R.id.image2);
-    img[2] = (OctogonImageView) findViewById(R.id.image3);
-    img[3] = (OctogonImageView) findViewById(R.id.image4);
-    img[4] = (OctogonImageView) findViewById(R.id.image5);
-    img[5] = (OctogonImageView) findViewById(R.id.image6);
-    img[6] = (OctogonImageView) findViewById(R.id.image7);
-    img[7] = (OctogonImageView) findViewById(R.id.image8);
-    replace.setOnDragListener(dragListener);
+  private void loadAppsInHomeScreen(boolean needToSort) {
+    applicationDetailsModels = applicationDataBase.getAllApplications();
+
+    if (needToSort)
+      sortMostUsed();
+
+    if (octogonImageViews == null) {
+      octogonImageViews = new OctogonImageView[8];
+      replace = (ImageView) findViewById(R.id.replace);
+      octogonImageViews[0] = (OctogonImageView) findViewById(R.id.image1);
+      octogonImageViews[1] = (OctogonImageView) findViewById(R.id.image2);
+      octogonImageViews[2] = (OctogonImageView) findViewById(R.id.image3);
+      octogonImageViews[3] = (OctogonImageView) findViewById(R.id.image4);
+      octogonImageViews[4] = (OctogonImageView) findViewById(R.id.image5);
+      octogonImageViews[5] = (OctogonImageView) findViewById(R.id.image6);
+      octogonImageViews[6] = (OctogonImageView) findViewById(R.id.image7);
+      octogonImageViews[7] = (OctogonImageView) findViewById(R.id.image8);
+      replace.setOnDragListener(dragListener);
+    }
 
     loadApplicationImageView();
 
@@ -178,8 +198,27 @@ public class MainActivity extends Activity implements CallBack {
   public void asyncTaskCompleteCallBack() {
     applicationDetailsModels = ApplicationDataBase.getSingletonInstance(this).getAllApplications();
     if (applicationDetailsModels.size() > 0)
-      loadAppsInHomeScreen();
+      loadAppsInHomeScreen(false);
 
+  }
+
+  /**
+   * Sort by most frequent used first
+   */
+  private void sortMostUsed() {
+    Collections.sort(applicationDetailsModels, new Comparator<ApplicationDetailsModel>() {
+      @Override
+      public int compare(ApplicationDetailsModel lhs, ApplicationDetailsModel rhs) {
+        return rhs.getFrequencyCount() - lhs.getFrequencyCount();
+      }
+    });
+
+    Collections.sort(applicationDetailsModels, new Comparator<ApplicationDetailsModel>() {
+      @Override
+      public int compare(ApplicationDetailsModel lhs, ApplicationDetailsModel rhs) {
+        return (int) (rhs.getLastUsedOn() - lhs.getLastUsedOn());
+      }
+    });
   }
 
 }
