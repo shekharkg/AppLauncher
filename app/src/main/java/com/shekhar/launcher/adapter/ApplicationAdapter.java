@@ -92,7 +92,6 @@ public class ApplicationAdapter extends BaseAdapter {
     });
     if (parse != null) {
 
-      Log.e("adap", parse);
       row.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {

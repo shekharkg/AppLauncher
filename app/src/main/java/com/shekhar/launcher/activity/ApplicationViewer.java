@@ -1,4 +1,4 @@
-package com.shekhar.launcher;
+package com.shekhar.launcher.activity;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -8,8 +8,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.GridView;
-import android.widget.RelativeLayout;
 
+import com.shekhar.launcher.R;
 import com.shekhar.launcher.adapter.ApplicationAdapter;
 import com.shekhar.launcher.dao.ApplicationDetailsModel;
 import com.shekhar.launcher.database.ApplicationDataBase;
@@ -22,7 +22,6 @@ import java.util.List;
 public class ApplicationViewer extends Activity {
 
   public static List<ApplicationDetailsModel> applicationDetailsModels;
-  private String intentData;
 
   @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
   @Override
@@ -36,9 +35,8 @@ public class ApplicationViewer extends Activity {
     Log.e("size", String.valueOf(applicationDetailsModels.size()));
     if (getActionBar() != null)
       getActionBar().hide();
-    RelativeLayout appViewer = (RelativeLayout) findViewById(R.id.appViewer);
-    appViewer.setBackground(getResources().getDrawable(R.drawable.bg));
-    intentData = getIntent().getStringExtra("ID");
+
+    String intentData = getIntent().getStringExtra("ID");
     if (intentData != null) {
       AlertDialog.Builder dialog = new AlertDialog.Builder(this);
       dialog.setMessage("Select any one application for replacement");

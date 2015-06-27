@@ -1,4 +1,4 @@
-package com.shekhar.launcher;
+package com.shekhar.launcher.activity;
 
 import android.app.Activity;
 import android.content.ClipData;
@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.github.siyamed.shapeimageview.OctogonImageView;
+import com.shekhar.launcher.R;
 import com.shekhar.launcher.async.AddApplicationDetailsAsync;
 import com.shekhar.launcher.dao.ApplicationDetailsModel;
 import com.shekhar.launcher.database.ApplicationDataBase;
@@ -25,9 +26,9 @@ import java.util.List;
 
 public class MainActivity extends Activity implements CallBack {
 
-  private List<ApplicationDetailsModel> applicationDetailsModels;
+  public static List<ApplicationDetailsModel> applicationDetailsModels;
   private final String TAG = "<<MainActivity>>";
-  ApplicationDataBase applicationDataBase;
+  private ApplicationDataBase applicationDataBase;
 
   private ImageView replace;
   public OctogonImageView[] img;
@@ -156,6 +157,13 @@ public class MainActivity extends Activity implements CallBack {
     replace.setOnDragListener(dragListener);
 
     loadApplicationImageView();
+
+    findViewById(R.id.launcher).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        startActivity(new Intent(MainActivity.this, ApplicationGridActivity.class));
+      }
+    });
   }
 
   @Override
