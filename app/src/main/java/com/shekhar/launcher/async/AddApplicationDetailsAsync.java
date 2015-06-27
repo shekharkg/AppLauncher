@@ -18,8 +18,8 @@ import java.util.List;
  */
 public class AddApplicationDetailsAsync extends AsyncTask<Void, Void, Void> {
 
-  private Context context;
   private final String TAG = "<<Async>>";
+  private Context context;
   private CallBack callBack;
   private ApplicationDataBase applicationDataBase;
 
@@ -42,6 +42,7 @@ public class AddApplicationDetailsAsync extends AsyncTask<Void, Void, Void> {
     //Iterating PackageInfo for package name
     for (PackageInfo packageInfo : listAppInfo) {
 
+      //To remove the system apps details
       if (context.getPackageManager().getLaunchIntentForPackage(packageInfo.packageName) != null) {
         Log.e(TAG, "App Details: Package name : " + packageInfo.packageName
             + ", App name : " + packageInfo.applicationInfo.loadLabel(packageManager).toString()
@@ -59,6 +60,7 @@ public class AddApplicationDetailsAsync extends AsyncTask<Void, Void, Void> {
 
   @Override
   protected void onPostExecute(Void aVoid) {
+    //Notify calling method about completion
     callBack.asyncTaskCompleteCallBack();
   }
 }

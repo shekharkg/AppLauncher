@@ -6,6 +6,9 @@ package com.shekhar.launcher.intrface;
  */
 public interface CallBack {
 
+  /**
+   * Interface used to notify async was completed
+   */
   void asyncTaskCompleteCallBack();
 
 }

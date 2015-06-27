@@ -12,6 +12,9 @@ public class ApplicationDetailsModel {
   private long lastUsedOn;
   private int frequencyCount;
 
+  /**
+   * Called to create object using data from database
+   */
   public ApplicationDetailsModel(int _id, String appPackage, String appName,
                                  long installedOn, long lastUsedOn, int frequencyCount) {
     this._id = _id;
@@ -22,6 +25,9 @@ public class ApplicationDetailsModel {
     this.frequencyCount = frequencyCount;
   }
 
+  /**
+   * Called to create object to insert into database
+   */
   public ApplicationDetailsModel(String appPackage, String appName,
                                  long installedOn, long lastUsedOn, int frequencyCount) {
     this.appPackage = appPackage;

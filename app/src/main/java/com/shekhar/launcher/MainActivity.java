@@ -71,9 +71,12 @@ public class MainActivity extends Activity implements CallBack {
   public void onBackPressed() {
   }
 
+
+  /**
+   * Notify that async was completed
+   */
   @Override
   public void asyncTaskCompleteCallBack() {
-    Log.d(TAG, "Callback");
     applicationDetailsModels = ApplicationDataBase.getSingletonInstance(this).getAllApplications();
     if (applicationDetailsModels.size() > 0)
       showList();
