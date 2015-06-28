@@ -1,15 +1,11 @@
 package com.shekhar.launcher.activity;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.hardware.Sensor;
-import android.hardware.SensorListener;
-import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -58,6 +54,26 @@ public class ApplicationGridActivity extends ActionBarActivity {
       }
     });
 
+  }
+
+  @Override
+  public boolean onKeyUp(int keyCode, KeyEvent event) {
+    if (keyCode == KeyEvent.KEYCODE_HOME || keyCode == KeyEvent.KEYCODE_BACK) {
+      finish();
+    }
+    return false;
+  }
+
+  @Override
+  public void onResume() {
+    mShaker.resume();
+    super.onResume();
+  }
+
+  @Override
+  public void onPause() {
+    mShaker.pause();
+    super.onPause();
   }
 
   @Override
@@ -175,7 +191,8 @@ public class ApplicationGridActivity extends ActionBarActivity {
       }
     });
   }
-  private void sortAlphabetic(){
+
+  private void sortAlphabetic() {
     sortPosition = 4;
     Collections.sort(MainActivity.applicationDetailsModels, new Comparator<ApplicationDetailsModel>() {
       @Override
