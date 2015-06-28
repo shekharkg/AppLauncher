@@ -8,6 +8,8 @@ import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -88,21 +90,28 @@ public class ApplicationsGridAdapter extends BaseAdapter {
     row.setOnLongClickListener(new View.OnLongClickListener() {
       @Override
       public boolean onLongClick(View view) {
-        uninstallApplication(model.getAppPackage());
+        uninstallApplication(model);
 
         return false;
       }
     });
 
+    Animation anim = AnimationUtils.loadAnimation(context, R.anim.fly_in);
+    row.setAnimation(anim);
+    anim.start();
+
     return row;
   }
 
-  public void uninstallApplication(String applicationPackageName) {
-    if (applicationPackageName != null) {
+  public void uninstallApplication(ApplicationDetailsModel model) {
+    if (model.getAppPackage() != null) {
       try {
         Intent intent = new Intent(Intent.ACTION_DELETE);
-        intent.setData(Uri.parse("package:" + applicationPackageName));
+        intent.setData(Uri.parse("package:" + model.getAppPackage()));
         context.startActivity(intent);
+        applicationDataBase.deleteApp(model.getId());
+        MainActivity.applicationDetailsModels.remove(model);
+        this.notifyDataSetChanged();
       } catch (Exception e) {
         e.printStackTrace();
       }

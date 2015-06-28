@@ -110,6 +110,13 @@ public class ApplicationDataBase extends SQLiteOpenHelper {
     return sqLiteDatabase.update(TABLE_NAME, values, UID + "=?", new String[]{String.valueOf(id)});
   }
 
+  /**
+   * Delete uninstalled app from database
+   */
+  public long deleteApp(int id) {
+    return sqLiteDatabase.delete(TABLE_NAME, UID + "=?", new String[]{String.valueOf(id)});
+  }
+
 
   @Override
   public void onCreate(SQLiteDatabase db) {
