@@ -24,9 +24,6 @@
       android:name=".activity.ApplicationGridActivity"
       android:screenOrientation="portrait"/>
 
-    <activity
-      android:name=".activity.ApplicationViewer"
-      android:screenOrientation="portrait"/>
 
   </application>
 

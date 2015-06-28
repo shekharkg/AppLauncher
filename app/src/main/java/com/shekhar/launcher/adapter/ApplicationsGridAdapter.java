@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -84,7 +85,28 @@ public class ApplicationsGridAdapter extends BaseAdapter {
       }
     });
 
+    row.setOnLongClickListener(new View.OnLongClickListener() {
+      @Override
+      public boolean onLongClick(View view) {
+        uninstallApplication(model.getAppPackage());
+
+        return false;
+      }
+    });
+
     return row;
+  }
+
+  public void uninstallApplication(String applicationPackageName) {
+    if (applicationPackageName != null) {
+      try {
+        Intent intent = new Intent(Intent.ACTION_DELETE);
+        intent.setData(Uri.parse("package:" + applicationPackageName));
+        context.startActivity(intent);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
   }
 
   private class ViewHolder {

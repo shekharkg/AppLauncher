@@ -1,18 +1,10 @@
 package com.shekhar.launcher.activity;
 
 import android.app.Activity;
-import android.content.ClipData;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Point;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.DragEvent;
 import android.view.View;
-import android.widget.ImageView;
 
 import com.github.siyamed.shapeimageview.OctogonImageView;
 import com.shekhar.launcher.R;
@@ -33,9 +25,7 @@ public class MainActivity extends Activity implements CallBack {
   private final String TAG = "<<MainActivity>>";
   private ApplicationDataBase applicationDataBase;
 
-  private ImageView replace;
   public OctogonImageView[] octogonImageViews;
-  private String selectedId;
 
 
   @Override
@@ -55,18 +45,6 @@ public class MainActivity extends Activity implements CallBack {
   private void loadApplicationImageView() {
     for (int i = 0; i < 8; i++) {
       final ApplicationDetailsModel model = applicationDetailsModels.get(i);
-      octogonImageViews[i].setOnLongClickListener(new View.OnLongClickListener() {
-        @Override
-        public boolean onLongClick(View view) {
-          replace.setVisibility(View.VISIBLE);
-          selectedId = String.valueOf(model.getId());
-          Dragshadow shadowBuilder = new Dragshadow(view);
-          ClipData data = ClipData.newPlainText(" ", " ");
-          view.startDrag(data, shadowBuilder, view, 0);
-          return false;
-        }
-      });
-
       octogonImageViews[i].setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -96,59 +74,6 @@ public class MainActivity extends Activity implements CallBack {
     }
   }
 
-  private class Dragshadow extends View.DragShadowBuilder {
-    ColorDrawable grayShedow;
-
-    public Dragshadow(View view) {
-      super(view);
-      grayShedow = new ColorDrawable(Color.LTGRAY);
-    }
-
-    @Override
-    public void onDrawShadow(Canvas canvas) {
-      grayShedow.draw(canvas);
-    }
-
-    @Override
-    public void onProvideShadowMetrics(Point shadowSize, Point shadowTouchPoint) {
-      View v = getView();
-      int h = v.getHeight();
-      int w = v.getWidth();
-      grayShedow.setBounds(0, 0, h, w);
-      shadowSize.set(h, w);
-      shadowTouchPoint.set(h, w);
-    }
-
-  }
-
-  View.OnDragListener dragListener = new View.OnDragListener() {
-    @Override
-    public boolean onDrag(View view, DragEvent dragEvent) {
-      int event = dragEvent.getAction();
-      switch (event) {
-        case DragEvent.ACTION_DRAG_ENTERED:
-          Log.e("event", "entered");
-          break;
-        case DragEvent.ACTION_DRAG_EXITED:
-          Log.e("event", "exit");
-          break;
-        case DragEvent.ACTION_DROP:
-          ImageView targetView = (ImageView) view;
-          if (targetView.getId() == replace.getId()) {
-            Intent intent = new Intent(MainActivity.this, ApplicationViewer.class);
-            intent.putExtra("ID", selectedId);
-            MainActivity.this.startActivity(intent);
-          }
-          break;
-        case DragEvent.ACTION_DRAG_ENDED:
-          Log.e("event", "ended");
-          replace.setVisibility(View.GONE);
-          break;
-      }
-      return true;
-    }
-  };
-
   @Override
   protected void onResume() {
     super.onResume();
@@ -164,7 +89,6 @@ public class MainActivity extends Activity implements CallBack {
 
     if (octogonImageViews == null) {
       octogonImageViews = new OctogonImageView[8];
-      replace = (ImageView) findViewById(R.id.replace);
       octogonImageViews[0] = (OctogonImageView) findViewById(R.id.image1);
       octogonImageViews[1] = (OctogonImageView) findViewById(R.id.image2);
       octogonImageViews[2] = (OctogonImageView) findViewById(R.id.image3);
@@ -173,7 +97,6 @@ public class MainActivity extends Activity implements CallBack {
       octogonImageViews[5] = (OctogonImageView) findViewById(R.id.image6);
       octogonImageViews[6] = (OctogonImageView) findViewById(R.id.image7);
       octogonImageViews[7] = (OctogonImageView) findViewById(R.id.image8);
-      replace.setOnDragListener(dragListener);
     }
 
     loadApplicationImageView();
